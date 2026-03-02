@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Autumn Lake Review Blitz 🏀</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --maroon: #822924;
+    --orange: #df5928;
+    --grad: linear-gradient(90deg, #df5928, #822924);
+    --bg: #0d0d0d;
+    --card: #1a1a1a;
+    --border: #2a2a2a;
+    --text: #f0f0f0;
+    --muted: #888;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+  /* TICKER */
+  .ticker-wrap { background: var(--grad); padding: 10px 0; overflow: hidden; white-space: nowrap; }
+  .ticker-inner { display: inline-block; animation: ticker 120s linear infinite; }
+  .ticker-inner span { margin: 0 40px; font-family: 'Oswald', sans-serif; font-size: 14px; letter-spacing: 1px; color: #fff; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* HEADER */
+  header { text-align: center; padding: 40px 20px 20px; position: relative; }
+  .header-inner { display: flex; align-items: center; justify-content: center; gap: 20px; }
+  .hoop-svg { width: 70px; opacity: 0.9; }
+  .title-block h1 { font-family: 'Oswald', sans-serif; font-size: clamp(28px, 6vw, 56px); font-weight: 700; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px; text-transform: uppercase; }
+  .title-block .subtitle { font-family: 'Oswald', sans-serif; font-size: clamp(13px, 2vw, 17px); color: var(--orange); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
+  .tagline { margin-top: 10px; font-size: 13px; color: var(--muted); font-style: italic; letter-spacing: 0.5px; }
+
+  /* STATS BAR */
+  .stats-bar { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; padding: 20px; }
+  .stat-pill { background: var(--card); border: 1px solid var(--border); border-radius: 50px; padding: 10px 22px; text-align: center; min-width: 130px; }
+  .stat-pill .label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); font-family: 'Oswald', sans-serif; }
+  .stat-pill .value { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+  /* MAIN */
+  main { max-width: 900px; margin: 0 auto; padding: 10px 16px 60px; }
+  .section-title { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px; }
+
+  /* LEADERBOARD ROWS */
+  .team-row { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 10px; display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: 14px; transition: transform 0.2s, border-color 0.2s; }
+  .team-row:hover { transform: translateX(4px); border-color: var(--orange); }
+  .team-row.rank-1 { border-color: gold; background: linear-gradient(135deg, #1a1a1a, #2a2000); }
+  .team-row.rank-2 { border-color: #aaa; }
+  .team-row.rank-3 { border-color: #cd7f32; }
+
+  .rank-badge { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+  .rank-1 .rank-badge { background: gold; color: #000; }
+  .rank-2 .rank-badge { background: #aaa; color: #000; }
+  .rank-3 .rank-badge { background: #cd7f32; color: #000; }
+  .rank-other .rank-badge { background: var(--border); color: var(--muted); font-size: 14px; }
+
+  .team-info .team-name { font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 600; }
+  .team-info .facility { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .team-info .manager { font-size: 11px; color: var(--orange); margin-top: 1px; }
+  .progress-wrap { margin-top: 8px; }
+  .progress-bg { background: var(--border); border-radius: 4px; height: 5px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--grad); border-radius: 4px; transition: width 1s ease; }
+
+  .team-stats { text-align: right; flex-shrink: 0; }
+  .review-count { font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 700; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .review-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .change-pill { display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: 'Oswald', sans-serif; }
+  .change-pos { background: #0d2e1a; color: #4caf50; border: 1px solid #4caf50; }
+  .change-zero { background: #1a1a1a; color: var(--muted); border: 1px solid var(--border); }
+
+  /* FOOTER */
+  footer { text-align: center; padding: 30px; font-size: 11px; color: var(--muted); }
+  .refresh-note { font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 12px; }
+
+  /* LOADING */
+  .loading { text-align: center; padding: 60px; font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker">
+    <span>⭐ AUTUMN LAKE REVIEW BLITZ</span><span>🏀 WHO WILL DOMINATE THE GOOGLE REVIEWS COURT?</span>
+    <span>💪 WOMEN WHO WIN — AUTUMN LAKE HEALTHCARE</span><span>⭐ EVERY REVIEW COUNTS — PUSH YOUR TEAM TO THE TOP</span>
+    <span>🏆 10 FACILITIES. 1 CHAMPION. LET'S GO.</span><span>⭐ AUTUMN LAKE REVIEW BLITZ</span>
+    <span>🏀 WHO WILL DOMINATE THE GOOGLE REVIEWS COURT?</span><span>💪 WOMEN WHO WIN — AUTUMN LAKE HEALTHCARE</span>
+    <span>⭐ EVERY REVIEW COUNTS — PUSH YOUR TEAM TO THE TOP</span><span>🏆 10 FACILITIES. 1 CHAMPION. LET'S GO.</span>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <!-- Left Hoop -->
+    <svg class="hoop-svg" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5" y="5" width="70" height="8" rx="4" fill="#df5928"/>
+      <rect x="35" y="13" width="10" height="30" fill="#822924"/>
+      <ellipse cx="40" cy="50" rx="28" ry="8" stroke="#df5928" stroke-width="4" fill="none"/>
+      <path d="M20 58 Q15 80 18 105" stroke="#822924" stroke-width="3" fill="none" stroke-dasharray="4 3"/>
+      <path d="M60 58 Q65 80 62 105" stroke="#822924" stroke-width="3" fill="none" stroke-dasharray="4 3"/>
+      <path d="M28 55 L22 100 Q40 110 58 100 L52 55" stroke="#df5928" stroke-width="2.5" fill="none" stroke-dasharray="3 3"/>
+    </svg>
+
+    <div class="title-block">
+      <h1>Autumn Lake<br/>Review Blitz</h1>
+      <div class="subtitle">⭐ Google Reviews Championship ⭐</div>
+      <div class="tagline">She runs. She rates. She dominates.</div>
+    </div>
+
+    <!-- Right Hoop (flipped) -->
+    <svg class="hoop-svg" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:scaleX(-1)">
+      <rect x="5" y="5" width="70" height="8" rx="4" fill="#df5928"/>
+      <rect x="35" y="13" width="10" height="30" fill="#822924"/>
+      <ellipse cx="40" cy="50" rx="28" ry="8" stroke="#df5928" stroke-width="4" fill="none"/>
+      <path d="M20 58 Q15 80 18 105" stroke="#822924" stroke-width="3" fill="none" stroke-dasharray="4 3"/>
+      <path d="M60 58 Q65 80 62 105" stroke="#822924" stroke-width="3" fill="none" stroke-dasharray="4 3"/>
+      <path d="M28 55 L22 100 Q40 110 58 100 L52 55" stroke="#df5928" stroke-width="2.5" fill="none" stroke-dasharray="3 3"/>
+    </svg>
+  </div>
+</header>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-pill"><div class="label">Total Reviews</div><div class="value" id="total-reviews">—</div></div>
+  <div class="stat-pill"><div class="label">Current Leader</div><div class="value" id="current-leader" style="font-size:15px">—</div></div>
+  <div class="stat-pill"><div class="label">Teams Competing</div><div class="value">10</div></div>
+  <div class="stat-pill"><div class="label">Last Updated</div><div class="value" id="last-updated" style="font-size:13px">—</div></div>
+</div>
+
+<!-- LEADERBOARD -->
+<main>
+  <div class="section-title">🏆 Live Rankings — New Google Reviews</div>
+  <div id="leaderboard"><div class="loading">Loading rankings…</div></div>
+  <div class="refresh-note" id="refresh-note">Auto-refreshes every 60 seconds</div>
+</main>
+
+<footer>
+  <p>Autumn Lake Healthcare · Review Blitz Competition · Powered with 💪 by the AL Marketing Team</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const medals = ['🥇', '🥈', '🥉'];
+
+  async function loadLeaderboard() {
+    const { data, error } = await sb
+      .from('leaderboard')
+      .select('*')
+      .order('new_reviews', { ascending: false });
+
+    if (error || !data) { console.error(error); return; }
+
+    // Stats bar
+    const total = data.reduce((s, r) => s + (r.new_reviews || 0), 0);
+    document.getElementById('total-reviews').textContent = total;
+    document.getElementById('current-leader').textContent = data[0]?.team_name || '—';
+
+    const updated = data[0]?.updated_at
+      ? new Date(data[0].updated_at).toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })
+      : '—';
+    document.getElementById('last-updated').textContent = updated;
+
+    // Max for progress bar
+    const maxReviews = Math.max(...data.map(r => r.new_reviews || 0), 1);
+
+    const container = document.getElementById('leaderboard');
+    container.innerHTML = '';
+
+    data.forEach((team, i) => {
+      const rank = i + 1;
+      const reviews = team.new_reviews || 0;
+      const prev = team.previous_reviews || 0;
+      const change = reviews - prev;
+      const pct = Math.round((reviews / maxReviews) * 100);
+      const rankClass = rank <= 3 ? `rank-${rank}` : 'rank-other';
+      const rankLabel = rank <= 3 ? medals[rank - 1] : rank;
+
+      const changePill = change > 0
+        ? `<span class="change-pill change-pos">+${change} today</span>`
+        : `<span class="change-pill change-zero">no change</span>`;
+
+      container.innerHTML += `
+        <div class="team-row ${rankClass}">
+          <div class="rank-badge">${rankLabel}</div>
+          <div class="team-info">
+            <div class="team-name">${team.team_name}</div>
+            <div class="facility">📍 ${team.facility_name}</div>
+            <div class="manager">👑 ${team.manager_name}</div>
+            <div class="progress-wrap">
+              <div class="progress-bg"><div class="progress-fill" style="width:${pct}%"></div></div>
+            </div>
+          </div>
+          <div class="team-stats">
+            <div class="review-count">${reviews}</div>
+            <div class="review-label">reviews</div>
+            ${changePill}
+          </div>
+        </div>`;
+    });
+  }
+
+  loadLeaderboard();
+  setInterval(loadLeaderboard, 60000);
+</script>
+</body>
+</html>

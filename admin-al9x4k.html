@@ -10,42 +10,47 @@
   * { box-sizing:border-box; margin:0; padding:0; }
   body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; padding:20px; }
   h1 { font-family:'Oswald',sans-serif; font-size:32px; background:var(--grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:4px; }
-  .subtitle { color:var(--muted); font-size:13px; margin-bottom:30px; }
-  .warning { background:#2a1000; border:1px solid var(--orange); border-radius:8px; padding:12px 16px; font-size:12px; color:var(--orange); margin-bottom:24px; }
-  table { width:100%; border-collapse:collapse; max-width:700px; }
+  .subtitle { color:var(--muted); font-size:13px; margin-bottom:16px; }
+  .warning { background:#2a1000; border:1px solid var(--orange); border-radius:8px; padding:12px 16px; font-size:12px; color:var(--orange); margin-bottom:16px; }
+  .scoring-key { background:#1a1a1a; border:1px solid var(--border); border-radius:8px; padding:12px 16px; font-size:12px; color:var(--muted); margin-bottom:24px; line-height:2; }
+  .scoring-key strong { color:var(--text); }
+  table { width:100%; border-collapse:collapse; max-width:820px; }
   th { font-family:'Oswald',sans-serif; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); padding:10px 12px; text-align:left; border-bottom:1px solid var(--border); }
-  td { padding:10px 12px; border-bottom:1px solid var(--border); font-size:14px; }
+  td { padding:10px 12px; border-bottom:1px solid var(--border); font-size:14px; vertical-align:middle; }
   td:first-child { font-family:'Oswald',sans-serif; font-size:15px; }
-  input[type=number] { background:#111; border:1px solid var(--border); border-radius:6px; color:var(--text); padding:6px 10px; width:90px; font-size:14px; font-family:'Inter',sans-serif; }
+  input[type=number] { background:#111; border:1px solid var(--border); border-radius:6px; color:var(--text); padding:6px 10px; width:80px; font-size:14px; font-family:'Inter',sans-serif; }
   input[type=number]:focus { outline:none; border-color:var(--orange); }
-  .btn-update { background:var(--grad); border:none; border-radius:6px; color:#fff; padding:6px 14px; font-family:'Oswald',sans-serif; font-size:13px; cursor:pointer; letter-spacing:0.5px; }
+  .btn-update { background:var(--grad); border:none; border-radius:6px; color:#fff; padding:6px 14px; font-family:'Oswald',sans-serif; font-size:13px; cursor:pointer; }
   .btn-update:hover { opacity:0.85; }
   .btn-update:disabled { opacity:0.4; cursor:not-allowed; }
   .status { font-size:12px; margin-left:8px; }
   .ok { color:#4caf50; }
   .err { color:#f44336; }
-  .save-all-wrap { margin-top:24px; max-width:700px; display:flex; align-items:center; gap:16px; }
+  .save-all-wrap { margin-top:24px; max-width:820px; display:flex; align-items:center; gap:16px; }
   .btn-save-all { background:var(--grad); border:none; border-radius:8px; color:#fff; padding:12px 30px; font-family:'Oswald',sans-serif; font-size:16px; cursor:pointer; letter-spacing:1px; }
   .btn-save-all:hover { opacity:0.85; }
-  .global-status { font-size:13px; }
   .loading { color:var(--muted); font-family:'Oswald',sans-serif; padding:30px 0; }
+  .pts-col { color: var(--orange); font-family:'Oswald',sans-serif; font-size:15px; }
 </style>
 </head>
 <body>
 <h1>🔐 Review Blitz Admin</h1>
-<p class="subtitle">Autumn Lake Review Blitz · Update Google Review Counts · Keep this URL private.</p>
+<p class="subtitle">Autumn Lake Review Blitz · Update review counts and points daily · Keep this URL private.</p>
 <div class="warning">⚠️ This page is access-controlled by URL only. Do not share the link publicly.</div>
+<div class="scoring-key">
+  📋 <strong>Scoring Key:</strong> &nbsp;⭐ 5-star review = <strong>1 point</strong> &nbsp;·&nbsp; ⭐ 5-star review with a written story = <strong>2 points</strong>
+</div>
 
 <div id="table-wrap"><div class="loading">Loading teams…</div></div>
 
 <div class="save-all-wrap">
   <button class="btn-save-all" onclick="saveAll()">💾 Save All Updates</button>
-  <span class="global-status" id="global-status"></span>
+  <span id="global-status" style="font-size:13px"></span>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
- const SUPABASE_URL = 'https://gvdcapnuiuizufduemvx.supabase.co';
+  const SUPABASE_URL = 'https://gvdcapnuiuizufduemvx.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_5COfMdEcTdd6u026v0O8LA_XqiQAs9m';
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -59,14 +64,15 @@
   }
 
   function renderTable() {
-    const wrap = document.getElementById('table-wrap');
-    wrap.innerHTML = `
+    document.getElementById('table-wrap').innerHTML = `
       <table>
         <thead><tr>
           <th>Team / Manager</th>
           <th>Facility</th>
-          <th>Previous</th>
-          <th>New Total</th>
+          <th>Current Reviews</th>
+          <th>New Reviews Total</th>
+          <th>Current Points</th>
+          <th>New Points Total</th>
           <th>Action</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
@@ -82,7 +88,9 @@
           </td>
           <td style="color:var(--muted);font-size:12px">${t.facility_name}</td>
           <td style="color:var(--muted)">${t.new_reviews}</td>
-          <td><input type="number" id="input-${t.id}" value="${t.new_reviews}" min="0"/></td>
+          <td><input type="number" id="reviews-${t.id}" value="${t.new_reviews}" min="0"/></td>
+          <td class="pts-col">${t.points || 0} pts</td>
+          <td><input type="number" id="points-${t.id}" value="${t.points || 0}" min="0"/></td>
           <td>
             <button class="btn-update" onclick="saveSingle(${t.id})">Update</button>
             <span class="status" id="status-${t.id}"></span>
@@ -92,46 +100,50 @@
   }
 
   async function saveSingle(id) {
-    const input = document.getElementById(`input-${id}`);
+    const reviewsInput = document.getElementById(`reviews-${id}`);
+    const pointsInput = document.getElementById(`points-${id}`);
     const statusEl = document.getElementById(`status-${id}`);
-    const newVal = parseInt(input.value, 10);
-    if (isNaN(newVal) || newVal < 0) { statusEl.textContent = '⚠️ Invalid'; statusEl.className = 'status err'; return; }
+    const newReviews = parseInt(reviewsInput.value, 10);
+    const newPoints = parseInt(pointsInput.value, 10);
+
+    if (isNaN(newReviews) || newReviews < 0 || isNaN(newPoints) || newPoints < 0) {
+      statusEl.textContent = '⚠️ Invalid'; statusEl.className = 'status err'; return;
+    }
 
     const team = teams.find(t => t.id === id);
     const btn = document.querySelector(`#row-${id} .btn-update`);
     btn.disabled = true;
-    statusEl.textContent = 'Saving…';
-    statusEl.className = 'status';
+    statusEl.textContent = 'Saving…'; statusEl.className = 'status';
 
     const { error } = await sb.from('leaderboard').update({
       previous_reviews: team.new_reviews,
-      new_reviews: newVal,
+      new_reviews: newReviews,
+      points: newPoints,
       updated_at: new Date().toISOString()
     }).eq('id', id);
 
     if (error) {
-      statusEl.textContent = '✗ Error';
-      statusEl.className = 'status err';
+      statusEl.textContent = '✗ Error'; statusEl.className = 'status err';
     } else {
-      statusEl.textContent = '✓ Saved';
-      statusEl.className = 'status ok';
-      team.new_reviews = newVal;
+      statusEl.textContent = '✓ Saved'; statusEl.className = 'status ok';
+      team.new_reviews = newReviews;
+      team.points = newPoints;
     }
     btn.disabled = false;
   }
 
   async function saveAll() {
     const statusEl = document.getElementById('global-status');
-    statusEl.textContent = 'Saving all…';
-    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = 'Saving all…'; statusEl.style.color = 'var(--muted)';
 
     const promises = teams.map(t => {
-      const input = document.getElementById(`input-${t.id}`);
-      const newVal = parseInt(input.value, 10);
-      if (isNaN(newVal) || newVal < 0) return Promise.resolve();
+      const newReviews = parseInt(document.getElementById(`reviews-${t.id}`).value, 10);
+      const newPoints = parseInt(document.getElementById(`points-${t.id}`).value, 10);
+      if (isNaN(newReviews) || isNaN(newPoints)) return Promise.resolve();
       return sb.from('leaderboard').update({
         previous_reviews: t.new_reviews,
-        new_reviews: newVal,
+        new_reviews: newReviews,
+        points: newPoints,
         updated_at: new Date().toISOString()
       }).eq('id', t.id);
     });
@@ -140,12 +152,10 @@
     const anyError = results.some(r => r && r.error);
 
     if (anyError) {
-      statusEl.textContent = '⚠️ Some updates failed — check individually';
-      statusEl.style.color = '#f44336';
+      statusEl.textContent = '⚠️ Some updates failed'; statusEl.style.color = '#f44336';
     } else {
-      statusEl.textContent = '✅ All saved successfully!';
-      statusEl.style.color = '#4caf50';
-      await loadTeams(); // refresh to show new "previous" values
+      statusEl.textContent = '✅ All saved!'; statusEl.style.color = '#4caf50';
+      await loadTeams();
     }
   }
 

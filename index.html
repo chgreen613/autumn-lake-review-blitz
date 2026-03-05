@@ -43,6 +43,11 @@
   main { max-width: 900px; margin: 0 auto; padding: 10px 16px 60px; }
   .section-title { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px; }
 
+  /* LEGEND */
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+  .legend-item { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--grad); }
+
   /* LEADERBOARD ROWS */
   .team-row { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 10px; display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: 14px; transition: transform 0.2s, border-color 0.2s; }
   .team-row:hover { transform: translateX(4px); border-color: var(--orange); }
@@ -64,8 +69,9 @@
   .progress-fill { height: 100%; background: var(--grad); border-radius: 4px; transition: width 1s ease; }
 
   .team-stats { text-align: right; flex-shrink: 0; }
-  .review-count { font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 700; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .review-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .points-count { font-family: 'Oswald', sans-serif; font-size: 32px; font-weight: 700; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .points-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .review-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
   .change-pill { display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: 'Oswald', sans-serif; }
   .change-pos { background: #0d2e1a; color: #4caf50; border: 1px solid #4caf50; }
   .change-zero { background: #1a1a1a; color: var(--muted); border: 1px solid var(--border); }
@@ -73,8 +79,6 @@
   /* FOOTER */
   footer { text-align: center; padding: 30px; font-size: 11px; color: var(--muted); }
   .refresh-note { font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 12px; }
-
-  /* LOADING */
   .loading { text-align: center; padding: 60px; font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--muted); }
 </style>
 </head>
@@ -85,16 +89,16 @@
   <div class="ticker-inner" id="ticker">
     <span>⭐ AUTUMN LAKE REVIEW BLITZ</span><span>🏀 WHO WILL DOMINATE THE GOOGLE REVIEWS COURT?</span>
     <span>💪 WOMEN WHO WIN — AUTUMN LAKE HEALTHCARE</span><span>⭐ EVERY REVIEW COUNTS — PUSH YOUR TEAM TO THE TOP</span>
-    <span>🏆 10 FACILITIES. 1 CHAMPION. LET'S GO.</span><span>⭐ AUTUMN LAKE REVIEW BLITZ</span>
-    <span>🏀 WHO WILL DOMINATE THE GOOGLE REVIEWS COURT?</span><span>💪 WOMEN WHO WIN — AUTUMN LAKE HEALTHCARE</span>
-    <span>⭐ EVERY REVIEW COUNTS — PUSH YOUR TEAM TO THE TOP</span><span>🏆 10 FACILITIES. 1 CHAMPION. LET'S GO.</span>
+    <span>🏆 9 FACILITIES. 1 CHAMPION. LET'S GO.</span><span>⭐ 1 PT FOR 5 STARS · 2 PTS FOR 5 STARS WITH A STORY</span>
+    <span>⭐ AUTUMN LAKE REVIEW BLITZ</span><span>🏀 WHO WILL DOMINATE THE GOOGLE REVIEWS COURT?</span>
+    <span>💪 WOMEN WHO WIN — AUTUMN LAKE HEALTHCARE</span><span>⭐ EVERY REVIEW COUNTS — PUSH YOUR TEAM TO THE TOP</span>
+    <span>🏆 9 FACILITIES. 1 CHAMPION. LET'S GO.</span><span>⭐ 1 PT FOR 5 STARS · 2 PTS FOR 5 STARS WITH A STORY</span>
   </div>
 </div>
 
 <!-- HEADER -->
 <header>
   <div class="header-inner">
-    <!-- Left Hoop -->
     <svg class="hoop-svg" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="5" y="5" width="70" height="8" rx="4" fill="#df5928"/>
       <rect x="35" y="13" width="10" height="30" fill="#822924"/>
@@ -103,14 +107,11 @@
       <path d="M60 58 Q65 80 62 105" stroke="#822924" stroke-width="3" fill="none" stroke-dasharray="4 3"/>
       <path d="M28 55 L22 100 Q40 110 58 100 L52 55" stroke="#df5928" stroke-width="2.5" fill="none" stroke-dasharray="3 3"/>
     </svg>
-
     <div class="title-block">
       <h1>Autumn Lake<br/>Review Blitz</h1>
       <div class="subtitle">⭐ Google Reviews Championship ⭐</div>
       <div class="tagline">She runs. She rates. She dominates.</div>
     </div>
-
-    <!-- Right Hoop (flipped) -->
     <svg class="hoop-svg" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:scaleX(-1)">
       <rect x="5" y="5" width="70" height="8" rx="4" fill="#df5928"/>
       <rect x="35" y="13" width="10" height="30" fill="#822924"/>
@@ -124,17 +125,21 @@
 
 <!-- STATS BAR -->
 <div class="stats-bar">
+  <div class="stat-pill"><div class="label">Total Points</div><div class="value" id="total-points">—</div></div>
   <div class="stat-pill"><div class="label">Total Reviews</div><div class="value" id="total-reviews">—</div></div>
   <div class="stat-pill"><div class="label">Current Leader</div><div class="value" id="current-leader" style="font-size:15px">—</div></div>
-  <div class="stat-pill"><div class="label">Teams Competing</div><div class="value">9</div></div>
   <div class="stat-pill"><div class="label">Last Updated</div><div class="value" id="last-updated" style="font-size:13px">—</div></div>
 </div>
 
 <!-- LEADERBOARD -->
 <main>
-  <div class="section-title">🏆 Live Rankings — New Google Reviews</div>
+  <div class="section-title">🏆 Live Rankings — Sorted by Points</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot"></div>⭐ 5-star review = 1 point</div>
+    <div class="legend-item"><div class="legend-dot"></div>⭐ 5-star review with a story = 2 points</div>
+  </div>
   <div id="leaderboard"><div class="loading">Loading rankings…</div></div>
-  <div class="refresh-note" id="refresh-note">Auto-refreshes every 60 seconds</div>
+  <div class="refresh-note">Auto-refreshes every 60 seconds</div>
 </main>
 
 <footer>
@@ -145,7 +150,7 @@
 <script>
   const SUPABASE_URL = 'https://gvdcapnuiuizufduemvx.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_5COfMdEcTdd6u026v0O8LA_XqiQAs9m';
- const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const medals = ['🥇', '🥈', '🥉'];
 
@@ -153,13 +158,14 @@
     const { data, error } = await sb
       .from('leaderboard')
       .select('*')
-      .order('new_reviews', { ascending: false });
+      .order('points', { ascending: false });
 
     if (error || !data) { console.error(error); return; }
 
-    // Stats bar
-    const total = data.reduce((s, r) => s + (r.new_reviews || 0), 0);
-    document.getElementById('total-reviews').textContent = total;
+    const totalPts = data.reduce((s, r) => s + (r.points || 0), 0);
+    const totalRev = data.reduce((s, r) => s + (r.new_reviews || 0), 0);
+    document.getElementById('total-points').textContent = totalPts;
+    document.getElementById('total-reviews').textContent = totalRev;
     document.getElementById('current-leader').textContent = data[0]?.team_name || '—';
 
     const updated = data[0]?.updated_at
@@ -167,23 +173,22 @@
       : '—';
     document.getElementById('last-updated').textContent = updated;
 
-    // Max for progress bar
-    const maxReviews = Math.max(...data.map(r => r.new_reviews || 0), 1);
-
+    const maxPts = Math.max(...data.map(r => r.points || 0), 1);
     const container = document.getElementById('leaderboard');
     container.innerHTML = '';
 
     data.forEach((team, i) => {
       const rank = i + 1;
+      const pts = team.points || 0;
       const reviews = team.new_reviews || 0;
       const prev = team.previous_reviews || 0;
       const change = reviews - prev;
-      const pct = Math.round((reviews / maxReviews) * 100);
+      const pct = Math.round((pts / maxPts) * 100);
       const rankClass = rank <= 3 ? `rank-${rank}` : 'rank-other';
       const rankLabel = rank <= 3 ? medals[rank - 1] : rank;
 
       const changePill = change > 0
-        ? `<span class="change-pill change-pos">+${change} today</span>`
+        ? `<span class="change-pill change-pos">+${change} reviews today</span>`
         : `<span class="change-pill change-zero">no change</span>`;
 
       container.innerHTML += `
@@ -198,8 +203,9 @@
             </div>
           </div>
           <div class="team-stats">
-            <div class="review-count">${reviews}</div>
-            <div class="review-label">reviews</div>
+            <div class="points-count">${pts}</div>
+            <div class="points-label">pts</div>
+            <div class="review-sub">${reviews} reviews</div>
             ${changePill}
           </div>
         </div>`;
